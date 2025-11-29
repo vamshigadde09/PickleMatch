@@ -27,6 +27,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.jpg"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "604fb50a-4640-4796-9ad0-081f858a214a"
+      }
+    },
+    "owner": "vamshigadde"
   }
 }

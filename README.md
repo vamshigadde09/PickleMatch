@@ -28,11 +28,6 @@ A mobile-first platform for pickleball groups that organizes matches, shuffles t
 
 iOS, Android, Web
 
-## 🌐 Production Backend
-
-The app is configured to use the production backend hosted on Vercel:
-- **Backend URL**: https://pickle-match.vercel.app/
-
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -68,8 +63,6 @@ JWT_SECRET=your_jwt_secret
 PORT=5000
 ```
 
-**Note:** The frontend is configured to use the production backend at `https://pickle-match.vercel.app/`. To use a local backend, update `pickleball/src/api.js` with your local server URL.
-
 4. Start the development servers
 ```bash
 # Backend
@@ -80,6 +73,66 @@ npm run dev
 cd pickleball
 npm start
 ```
+
+## 📦 Building & Publishing with EAS
+
+### Prerequisites
+
+1. **EAS CLI is installed and initialized** ✅ (Already done)
+2. **Project is linked to Expo** ✅ (Project ID: 604fb50a-4640-4796-9ad0-081f858a214a)
+
+### Build Commands
+
+**Build for Android (APK for testing):**
+```bash
+cd pickleball
+eas build --platform android --profile preview
+```
+
+**Build for Android (AAB for Play Store):**
+```bash
+eas build --platform android --profile production
+```
+
+**Build for iOS:**
+```bash
+eas build --platform ios --profile production
+```
+
+**Build for both platforms:**
+```bash
+eas build --platform all --profile production
+```
+
+### Submit to App Stores
+
+After building, submit to stores:
+
+**Android (Google Play Store):**
+```bash
+eas submit --platform android
+```
+
+**iOS (App Store):**
+```bash
+eas submit --platform ios
+```
+
+### Build Profiles
+
+- **preview**: Creates APK/IPA files for internal testing
+- **production**: Creates AAB (Android) / IPA (iOS) for app store submission
+
+### Monitor Builds
+
+View your builds at: https://expo.dev/accounts/vamshigadde/projects/picklematch/builds
+
+## 🌐 Production Backend
+
+The app is configured to use the production backend hosted on Vercel:
+- **Backend URL**: https://pickle-match.vercel.app/
+
+**Note:** The frontend is configured to use the production backend. To use a local backend, update `pickleball/src/api.js` with your local server URL.
 
 ## 📖 Documentation
 
