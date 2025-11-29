@@ -1,0 +1,1155 @@
+📘 Product Requirements Document (PRD)
+PickleMatch – Social Pickleball Tournament App
+
+Version: 2.0 (Comprehensive)
+Platforms: Mobile App (React Native), Backend API (Node.js/Express/MongoDB)
+Author: Development Team
+Status: Implemented & Active
+Last Updated: 2024
+
+═══════════════════════════════════════════════════════════════════════════════
+
+1. 🎯 Product Overview
+
+PickleMatch is a mobile-first social platform for pickleball groups that organizes matches,
+shuffles teams, tracks winners, shows leaderboards, and stores comprehensive player stats.
+
+The app eliminates the confusion of:
+• Deciding who plays with whom
+• Creating fair teams
+• Generating match orders
+• Tracking winners and points
+• Maintaining consistent player stats across multiple games
+• Managing unregistered players until they register
+
+Players earn points individually and as teams, making the platform competitive and social.
+The platform supports both registered and unregistered players, with seamless data migration
+when unregistered players eventually register.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+2. 👥 User Roles & Permissions
+
+2.1 Normal User
+All users can:
+• Create an account with username, display name, mobile number, and password
+• Add friends via mobile number or username search
+• Create a room (automatically becomes room admin)
+• Join a room using room code
+• Add players to rooms they're members of
+• Create games (room members)
+• Play matches
+• Earn individual and team points
+• View global leaderboards and top scores
+• Search for players by name, username, or phone number (min 7 digits)
+• View other users' profiles
+• Manage their own profile
+• Toggle phone number visibility
+• View game history across all rooms
+
+2.2 Room Admin (Automatically the creator of that room)
+Controls:
+• Room name and settings
+• Room status (active/inactive) - deactivate/activate room
+• Game format selection
+• Player selection
+• Team generation
+• Match flow management
+• Winner selection
+• Shuffling teams
+• Ending a game
+• All member capabilities
+
+Room Status Control:
+• Admin can deactivate room (prevents creating/joining other rooms)
+• Admin cannot create or join other rooms while their room is active
+• Other members can still join and participate in active rooms
+
+2.3 Room Members
+Can:
+• View room dashboard
+• View players list
+• Add players to the room (via "Add Members" button)
+• Create and participate in games
+• View leaderboard and history
+• Earn points
+
+Cannot:
+• Modify room settings (name, status)
+• Delete the room
+
+2.4 Unregistered Players
+• Can participate in games before registration
+• Points and match history stored temporarily
+• When registering with same phone number:
+  • All historical data automatically linked
+  • Names replaced with system-generated unique identifiers for privacy
+  • Points and stats transferred to registered account
+
+═══════════════════════════════════════════════════════════════════════════════
+
+3. 🧭 Navigation Structure
+
+3.1 Bottom Tab Navigation
+1. Home Tab
+   • Join Room (via room code)
+   • Create Room
+   • Active Rooms List
+   • Game History (across all rooms)
+
+2. Top Scores Tab
+   • Top Individual Players
+     - Sortable by: Points, Wins, Streak
+     - Global leaderboard
+     - Player cards with stats
+   • Seasonal Leaderboard
+     - Weekly/Monthly filters
+     - Metrics: Points, Wins, Streak, Games
+   • Search Players (header button)
+     - Search by name, username, or phone (min 7 digits)
+     - Add Friend / View Profile buttons
+
+3. Profile Tab
+   • Personal Information
+   • Game Statistics (total games, wins, streak, win %)
+   • Individual & Team Points
+   • Partner Statistics
+     - Best Partner
+     - Most Frequent Teammate
+   • Friends List
+   • Settings
+     - Edit profile
+     - Toggle phone number visibility
+     - Logout
+
+3.2 Stack Navigation (Nested Screens)
+• Authentication
+  - Login Screen
+  - Register Screen
+
+• Room Management
+  - Create Room Screen
+  - Room Dashboard Screen
+  - Add Players to Room Screen
+
+• Game Flow
+  - Select Members Screen
+  - Choose Game Format Screen
+  - Team Assignment Screen
+  - Active Match Screen
+  - Game Results Screen
+
+• Profile & Discovery
+  - User Profile View Screen (view other users)
+  - History Screen
+
+═══════════════════════════════════════════════════════════════════════════════
+
+4. 🔍 Features Breakdown
+
+⭐ 4.1 Home Screen
+
+💠 4.1.1 Join Room
+• User enters a room code (6-character alphanumeric)
+• System checks if:
+  - User already exists in that room → auto-join
+  - Room exists and is active → join as member
+  - Room is inactive → cannot join
+• Room creator automatically included as a player
+• Other players can join using room code
+
+💠 4.1.2 Create Room
+• User enters:
+  - Room name (minimum 3 characters)
+  - Optional: Add players initially (can be empty)
+  - Optional toggle: Show mobile number publicly
+• Room code automatically generated (unique, fixed)
+• Room creator automatically added as first player
+• Room can be created empty - others can join via code
+• Room status defaults to "active"
+
+💠 4.1.3 Active Rooms
+• List of rooms user is member of
+• Shows room name, code, status
+• Quick access to room dashboard
+• Filter by active/inactive status
+
+💠 4.1.4 Game History
+• List of all past games across all rooms:
+  - Room name
+  - Date and time
+  - Game type/format
+  - Winning team and players
+  - Individual points earned
+  - Team points earned
+  - Medal winners (Gold, Silver, Bronze)
+• Users can tap to see:
+  - Full match breakdown
+  - All teams and players
+  - Detailed scores
+  - Points distribution
+
+⭐ 4.2 Top Scores Screen
+
+💠 4.2.1 Top Individual Players
+• Global leaderboard of all registered users
+• Sortable by:
+  - Total individual points (default)
+  - Total wins
+  - Current streak
+• Each card shows:
+  - Rank (with medals for top 3: 🥇🥈🥉)
+  - Player avatar/initials
+  - Display name and username
+  - Total points
+  - Total wins
+  - Win percentage
+  - Current streak
+• Pull-to-refresh to update
+• Limit: Top 50 players
+
+💠 4.2.2 Seasonal Leaderboard
+• Filterable by:
+  - Period: Weekly / Monthly
+  - Metric: Points / Wins / Streak / Games Played
+• Shows performance for selected time period
+• Each card shows relevant seasonal stats
+• Limit: Top 50 players
+
+💠 4.2.3 Search Players (NEW)
+• Search button in header
+• Search modal with input field
+• Search by:
+  - Name (partial match, case-insensitive)
+  - Username (partial match, case-insensitive)
+  - Phone number (minimum 7 digits required for privacy)
+• Real-time search with 500ms debounce
+• Results show:
+  - Player avatar/initials
+  - Display name
+  - Username
+  - Masked phone (last 4 digits) if phone search
+  - Action buttons:
+    • "Add Friend" (if not friends)
+    • "View Profile" (if already friends)
+    • "You" (disabled, if viewing own profile)
+• Click "View Profile" to see full user profile
+• Click "Add Friend" to send friend request
+
+⭐ 4.3 Profile Screen
+
+💠 4.3.1 Personal Information
+• Display name
+• Username (@username)
+• Avatar (or initials if no avatar)
+• Mobile number (if visibility toggle is ON)
+• Account creation date
+
+💠 4.3.2 Game Statistics
+• Total Games Played
+• Total Wins
+• Current Win Streak
+• Win Percentage (calculated automatically)
+• Individual Points (lifetime)
+• Team Points (lifetime)
+
+💠 4.3.3 Partner Statistics
+• Best Partner:
+  - Player name and avatar
+  - Games played together
+  - Wins together
+  - Win rate percentage
+  - Requires minimum 3 games together
+• Most Frequent Teammate:
+  - Player name and avatar
+  - Total games played together
+
+💠 4.3.4 Friends List
+• List of all friends
+• Shows:
+  - Friend's avatar/initials
+  - Display name
+  - Username
+  - Individual points
+• Tap friend to view their profile
+• Add friend button:
+  - Search by mobile number OR username
+  - Real-time validation
+• Remove friend functionality
+
+💠 4.3.5 Settings & Actions
+• Edit Profile:
+  - Update display name
+  - Update avatar URL
+  - Update username (unique validation)
+• Toggle Phone Number Visibility:
+  - ON: Phone visible to friends and in profile searches
+  - OFF: Phone hidden (privacy mode)
+• Logout:
+  - Clears authentication
+  - Returns to login screen
+
+⭐ 4.4 User Profile View Screen (NEW)
+
+💠 4.4.1 Viewing Other Users' Profiles
+• Accessible from:
+  - Search results (if already friends)
+  - Friends list
+  - Top Scores leaderboard (future)
+• Shows:
+  - Profile header with gradient
+  - Avatar and basic info
+  - Game statistics (points, wins, games, streak, win %)
+  - Phone number (only if user has visibility ON or you're viewing yourself)
+  - Friend status badge or "Add Friend" button
+• Cannot edit other users' profiles
+• Respects privacy settings
+
+💠 4.4.2 Add Friend from Profile
+• "Add Friend" button on non-friend profiles
+• One-click friend request
+• Updates friend status immediately
+• Shows success notification
+
+⭐ 4.5 Room Dashboard Screen
+
+💠 4.5.1 Room Information
+• Room name and code
+• Room status (Active/Inactive)
+• Copy room code to clipboard (silent, no alert)
+• Created by information
+• Member count
+
+💠 4.5.2 Header Actions
+• Add Members Button (all members):
+  - Opens Add Players to Room screen
+  - Can add from friends, contacts, or manual entry
+• Deactivate/Activate Button (room creator only):
+  - Toggle room status
+  - Visual indicator (red = active, green = inactive)
+  - Prevents creator from creating/joining other rooms if active
+
+💠 4.5.3 Players Section
+• Tap on "Players" count to view modal
+• Modal shows:
+  - All players (registered and unregistered)
+  - For registered: Username (@username) and Individual Points
+  - For unregistered: Display name only
+  - Avatar/initials for each player
+
+💠 4.5.4 Active Game
+• Shows current active game if exists
+• Game format and status
+• "Continue Game" button
+• "Create New Game" button (only if no active game)
+• Prevents multiple active games per room
+
+💠 4.5.5 Leaderboard (When No Active Game)
+• Top 3 players with podium display:
+  - 🥇 First place (gold)
+  - 🥈 Second place (silver)
+  - 🥉 Third place (bronze)
+• Shows:
+  - Player avatar/initials
+  - Display name or username
+  - Total points in this room
+• Based on points earned in completed games within this room
+
+💠 4.5.6 Game History
+• List of completed games in this room
+• Quick access to game results
+
+⭐ 4.6 Add Players to Room Screen (NEW)
+
+💠 4.6.1 Adding Players
+• Three methods:
+  1. From Friends List
+     - Select from existing friends
+     - Shows friend's username and points
+  2. From Device Contacts
+     - Import contacts with phone numbers
+     - Match with existing users or create unregistered players
+  3. Manual Entry
+     - Enter name and phone number
+     - Creates unregistered player if user doesn't exist
+• Any room member can add players
+• Updates room's players array
+• New players become room members if registered
+
+═══════════════════════════════════════════════════════════════════════════════
+
+5️⃣ Game Formats & Creation Flow
+
+💠 5.1 Available Game Formats
+
+1️⃣ 1 vs 1 Format
+• Description: Direct one-on-one match
+• Required Players: Exactly 2
+• Format: Single match
+• Winner: Match winner gets Gold, runner-up gets Silver
+• Visibility: Only shown when exactly 2 players selected
+
+2️⃣ 2 vs 2 Format
+• Description: Classic doubles match
+• Required Players: Exactly 4
+• Format: Single match (Team A vs Team B)
+• Winner: Winning team gets Gold, runner-up gets Silver
+• Visibility: Only shown when exactly 4 players selected
+
+3️⃣ Pickle Format
+• Description: Full tournament with winners bracket, losers bracket, and final
+• Required Players: 4+ players (handles odd numbers with "plays twice")
+• Format: Structured bracket tournament
+• Rounds:
+  - Round 1: Initial matches
+  - Winners Bracket: Advancing teams
+  - Losers Bracket: Second chance
+  - Championship: Final match
+• Medals: Gold (Final winner), Silver (Final runner-up), Bronze (Losers bracket winner)
+• Visibility: Shown when 4+ players selected
+
+4️⃣ Round Robin Format
+• Description: Every team plays every other team
+• Required Players: 4+ players (handles odd numbers)
+• Format: All teams face each other once
+• Winner: Ranked by total wins, then point differences
+• Medals: Gold (Most wins), Silver (2nd place), Bronze (3rd place)
+• Visibility: Shown when 4+ players selected
+
+5️⃣ Quick Knockout Format
+• Description: Fast single-elimination bracket
+• Required Players: 4+ players (preferably even)
+• Format: Quarterfinals → Semifinals → Final
+• Winner: Single elimination bracket
+• Medals: Gold (Final winner), Silver (Final runner-up), Bronze (3rd place playoff winner)
+• Visibility: Shown when 4+ players selected
+
+💠 5.2 Step 1 — Select Members
+
+• Minimum players: 2 (for 1v1 format)
+• Maximum players: No limit (handled by format requirements)
+• Current user automatically included
+• Select from room players:
+  - Registered users (show username)
+  - Unregistered players (show name)
+• Can select players from:
+  - Friends list
+  - Room members
+  - Add new players on the fly
+• Validation: Must meet format requirements after selection
+
+💠 5.3 Step 2 — Choose Game Format
+
+• Shows available formats based on selected player count:
+  - 2 players → Only 1v1 shown
+  - 4 players → All formats shown (1v1, 2v2, tournament formats)
+  - 4+ players → Tournament formats shown (Pickle, Round Robin, Quick Knockout)
+• Each format card shows:
+  - Format name and icon
+  - Description
+  - Required players
+  - Medal system
+  - Details about format structure
+• User taps to select format
+
+💠 5.4 Step 3 — Team Assignment
+
+• System auto-generates teams based on format
+• Team assignment logic:
+
+**For 1v1:**
+- Player 1 vs Player 2
+
+**For 2v2:**
+- Team A: Player 1 + Player 2
+- Team B: Player 3 + Player 4
+
+**For Tournament Formats (4+ players):**
+- Teams of 2 players each
+- Odd Player Handling:
+  * If odd number of players, one player "plays twice"
+  * Player marked with "Plays Twice" badge
+  * Ensures all players participate fairly
+
+• Admin options:
+  - Shuffle Teams (randomize assignments)
+  - Accept Teams (proceed to game)
+
+💠 5.5 Step 4 — Game Screen (Active Match)
+
+• Shows current match:
+  - Team A vs Team B
+  - Player names
+  - Match number and round information
+• Match timeline visualization:
+  - Shows completed matches
+  - Highlights current match
+  - Shows upcoming matches
+• Admin actions:
+  - Select winning team
+  - Enter final scores
+  - Submit match result
+• System automatically:
+  - Determines next matches based on format
+  - Updates bracket/bracket status
+  - Tracks progression
+
+💠 5.6 Step 5 — Game Results
+
+• Shows final results based on format:
+
+**For 1v1/2v2:**
+- Winner name and score
+- Runner-up name and score
+- Simple display (no medal cards)
+
+**For Tournament Formats:**
+- Medal Winners:
+  * 🥇 Gold Medal: Team and players
+  * 🥈 Silver Medal: Team and players
+  * 🥉 Bronze Medal: Team and players
+- Match Details:
+  * All matches played
+  * Scores for each match
+  * Winner of each match
+
+• Points automatically assigned:
+  - Individual points for medal winners
+  - Team points for medal-winning teams
+  - Participation points for all players
+• Statistics updated:
+  - User total games, wins, streak
+  - Points added to user accounts
+
+💠 5.7 Game Flow Control
+
+• Only one active game per room at a time
+• If active game exists:
+  - "Create New Game" button hidden
+  - Shows "Continue Game" option
+  - Prevents duplicate games
+• Navigation flow:
+  - Team Assignment → Active Match (replace navigation)
+  - Back button from Active Match → Room Dashboard
+  - Prevents accidental game recreation
+
+═══════════════════════════════════════════════════════════════════════════════
+
+6. 🏅 Points & Medal System
+
+💠 6.1 Medal Assignment
+
+**1 vs 1 Format:**
+• 🥇 Gold: Match winner
+• 🥈 Silver: Match runner-up
+
+**2 vs 2 Format:**
+• 🥇 Gold: Winning team (both players)
+• 🥈 Silver: Runner-up team (both players)
+
+**Pickle Format:**
+• 🥇 Gold: Final match winner
+• 🥈 Silver: Final match runner-up
+• 🥉 Bronze: Losers bracket winner
+
+**Round Robin Format:**
+• 🥇 Gold: Team with most wins
+• 🥈 Silver: Team with 2nd most wins
+• 🥉 Bronze: Team with 3rd most wins
+• Ties resolved by point differences
+
+**Quick Knockout Format:**
+• 🥇 Gold: Final match winner
+• 🥈 Silver: Final match runner-up
+• 🥉 Bronze: 3rd place playoff winner
+
+💠 6.2 Points Distribution
+
+| Placement | Medal | Individual Points | Team Points |
+|-----------|-------|------------------|-------------|
+| 1st Place | 🥇 Gold | +10 | +10 |
+| 2nd Place | 🥈 Silver | +7 | +7 |
+| 3rd Place | 🥉 Bronze | +5 | +5 |
+| Participation | — | +2 | — |
+
+• Points are cumulative (lifetime totals)
+• Individual points tracked per user
+• Team points tracked per user (sum of all team wins)
+• Points persist across all games and rooms
+
+💠 6.3 Statistics Tracking
+
+**User Statistics:**
+• Total Games: Incremented when game completes
+• Total Wins: Incremented when user wins Gold medal
+• Current Streak: 
+  - Incremented when user wins
+  - Reset to 0 when user doesn't win
+• Win Percentage: (Total Wins / Total Games) × 100
+
+**Partner Statistics:**
+• Best Partner: Highest win rate (min 3 games together)
+• Most Frequent Teammate: Most games played together
+
+═══════════════════════════════════════════════════════════════════════════════
+
+7. 🔐 Privacy & Security Features
+
+💠 7.1 Phone Number Privacy
+
+• Default: Phone numbers hidden
+• User can toggle visibility in profile settings
+• Phone visibility affects:
+  - Profile display
+  - Search results
+  - Friend requests
+
+💠 7.2 Search Privacy
+
+• Phone number search requires minimum 7 digits
+• Partial phone matching for privacy
+• Phone numbers masked in search results (******1234)
+• Name/username search: Full privacy, no restrictions
+
+💠 7.3 Unregistered Player Privacy
+
+• When unregistered player registers:
+  - Original name replaced with system-generated unique identifier
+  - Format: "userXXXX" (where XXXX is unique number)
+  - Ensures no duplicate usernames
+  - Preserves privacy of original entry name
+  - All historical data linked seamlessly
+
+💠 7.4 Data Migration & Linking
+
+• Automatic data linking when unregistered player registers:
+  - Matches by phone number only (not name)
+  - All game history preserved
+  - All points transferred
+  - All match participation maintained
+  - System-generated name replaces original names in all records
+
+═══════════════════════════════════════════════════════════════════════════════
+
+8. 📱 User Interface & Experience
+
+💠 8.1 Design Principles
+
+• Modern, clean UI with purple accent color
+• Consistent design language across all screens
+• Card-based layouts with subtle shadows
+• Gradient headers for important sections
+• Responsive and touch-friendly
+• Dark mode support (via theme)
+
+💠 8.2 Key UI Components
+
+• Custom Alert Modal:
+  - Replaces native alerts
+  - Consistent styling
+  - Support for success, error, warning, info types
+  - Customizable buttons
+
+• Safe Area Handling:
+  - Uses react-native-safe-area-context
+  - Proper padding for all devices
+  - Handles notches and status bars
+
+• Loading States:
+  - Activity indicators
+  - Skeleton screens where appropriate
+  - Pull-to-refresh support
+
+• Empty States:
+  - Friendly messages
+  - Icon illustrations
+  - Clear call-to-actions
+
+💠 8.3 Navigation Patterns
+
+• Bottom tab navigation for main sections
+• Stack navigation for flows
+• Modal presentations for details
+• Back button handling (Android hardware back)
+• Deep linking support (future)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+9. 🔧 Technical Architecture
+
+💠 9.1 Backend (Node.js/Express/MongoDB)
+
+**API Structure:**
+• RESTful API design
+• JWT authentication
+• MongoDB for data storage
+• Mongoose ODM
+
+**Main Endpoints:**
+• `/api/v1/user/*` - User management, authentication, profile, friends, search
+• `/api/v1/room/*` - Room CRUD, join, leaderboard, status
+• `/api/v1/game/*` - Game creation, match results, points assignment
+• `/api/v1/top-scores/*` - Global leaderboards, seasonal stats
+
+**Data Models:**
+• User: username, displayName, mobile, passwordHash, friends, stats, points
+• Room: name, code, createdBy, members, players, status, history
+• Game: roomId, type, teams, matches, medals, pointsAssigned, status
+• Match: gameId, teams, winner, scores, status, roundNumber
+• UnregisteredPlayer: name, mobile, pendingStats, linkedUserId
+
+💠 9.2 Frontend (React Native/Expo)
+
+**Technology Stack:**
+• React Native with Expo
+• React Navigation (Tabs + Stack)
+• Axios for API calls
+• AsyncStorage for local data
+• Expo Linear Gradient
+• React Native Safe Area Context
+
+**State Management:**
+• React Hooks (useState, useEffect, useCallback)
+• Context API for authentication
+• Local state for component data
+• AsyncStorage for persistent auth
+
+**Key Libraries:**
+• @expo/vector-icons (Feather icons)
+• expo-clipboard (copy functionality)
+• react-native-gesture-handler
+
+💠 9.3 Data Flow
+
+**Authentication:**
+1. User registers/logs in
+2. JWT token stored in AsyncStorage
+3. Token included in all API requests
+4. Protected routes check token validity
+
+**Game Flow:**
+1. Create room → Add players → Select format → Generate teams
+2. Play matches → Submit results → Points assigned
+3. Statistics updated → Leaderboards refreshed
+
+**Unregistered Player Flow:**
+1. Player added to room/game with name and phone
+2. Points and stats stored in UnregisteredPlayer model
+3. When player registers with same phone:
+   - Data automatically linked
+   - Names replaced with system-generated IDs
+   - Points and stats transferred to User account
+
+═══════════════════════════════════════════════════════════════════════════════
+
+10. 📊 Data Models
+
+💠 10.1 User Model
+
+{
+  _id: ObjectId
+  username: String (unique, lowercase)
+  displayName: String
+  mobile: String (unique, normalized)
+  passwordHash: String
+  showMobile: Boolean (default: false)
+  avatarUrl: String (optional)
+  friends: [ObjectId] (references User)
+  individualPoints: Number (default: 0)
+  teamPoints: Number (default: 0)
+  stats: {
+    totalGames: Number (default: 0)
+    totalWins: Number (default: 0)
+    streak: Number (default: 0)
+  }
+  createdAt: Date
+  updatedAt: Date
+}
+
+💠 10.2 Room Model
+
+{
+  _id: ObjectId
+  name: String (min 3 chars)
+  code: String (unique, 6-char alphanumeric)
+  createdBy: ObjectId (references User)
+  members: [ObjectId] (references User)
+  players: [{
+    userId: ObjectId (references User, nullable)
+    name: String
+    mobile: String (normalized)
+  }]
+  showMobileNumber: Boolean (default: false)
+  status: String (enum: 'active', 'inactive', default: 'active')
+  history: [ObjectId] (references Game)
+  createdAt: Date
+  updatedAt: Date
+}
+
+💠 10.3 Game Model
+
+{
+  _id: ObjectId
+  roomId: ObjectId (references Room)
+  type: String (enum: 'one-vs-one', 'two-vs-two', 'pickle', 'round-robin', 'quick-knockout')
+  status: String (enum: 'pending', 'live', 'completed', default: 'pending')
+  teams: [{
+    letter: String
+    players: [{
+      userId: ObjectId (nullable)
+      name: String
+      mobile: String
+    }]
+    medal: String (enum: 'gold', 'silver', 'bronze', null)
+  }]
+  matches: [ObjectId] (references Match)
+  medals: {
+    gold: {
+      team: String
+      players: [ObjectId]
+    }
+    silver: {
+      team: String
+      players: [ObjectId]
+    }
+    bronze: {
+      team: String
+      players: [ObjectId]
+    }
+  }
+  pointsAssigned: Boolean (default: false)
+  createdAt: Date
+  updatedAt: Date
+}
+
+💠 10.4 Match Model
+
+{
+  _id: ObjectId
+  gameId: ObjectId (references Game)
+  roundNumber: Number
+  bracketType: String (enum: 'winners', 'losers', 'final', etc.)
+  team1: {
+    letter: String
+    players: [ObjectId or {name, mobile}]
+    score: Number
+  }
+  team2: {
+    letter: String
+    players: [ObjectId or {name, mobile}]
+    score: Number
+  }
+  winner: String (team letter)
+  status: String (enum: 'pending', 'live', 'finished', default: 'pending')
+  createdAt: Date
+  updatedAt: Date
+}
+
+💠 10.5 UnregisteredPlayer Model
+
+{
+  _id: ObjectId
+  name: String (original or system-generated)
+  mobile: String (unique, normalized)
+  linkedUserId: ObjectId (references User, nullable)
+  linkedAt: Date (nullable)
+  pendingStats: {
+    totalGames: Number
+    totalWins: Number
+    games: [ObjectId] (references Game)
+  }
+  createdAt: Date
+  updatedAt: Date
+}
+
+═══════════════════════════════════════════════════════════════════════════════
+
+11. 🔍 Search & Discovery Features
+
+💠 11.1 Player Search
+
+**Search Methods:**
+1. By Name: Partial match, case-insensitive
+2. By Username: Partial match, case-insensitive
+3. By Phone: Minimum 7 digits required
+
+**Privacy Features:**
+• Phone numbers masked in results (******1234)
+• 7-digit minimum prevents easy phone number enumeration
+• Results show friend status
+• Click to add friend or view profile
+
+**Search UI:**
+• Search button in Top Scores header
+• Modal overlay with search input
+• Real-time search with 500ms debounce
+• Loading states and error handling
+• Empty states with helpful messages
+
+💠 11.2 Friend Management
+
+**Add Friend:**
+• From search results
+• From user profile view
+• From profile screen (manual entry)
+• Methods: Mobile number or username
+
+**Friend List:**
+• Displayed in profile
+• Shows friend's stats and points
+• Tap to view friend's profile
+• Remove friend functionality
+
+**Friend Status:**
+• Checked in real-time
+• Updates immediately after adding
+• Visible in search results and profiles
+
+═══════════════════════════════════════════════════════════════════════════════
+
+12. 🎨 UI/UX Enhancements
+
+💠 12.1 Visual Design
+
+• Color Palette:
+  - Primary Accent: Purple (#8b5cf6)
+  - Success: Green (#10b981)
+  - Error: Red (#ef4444)
+  - Background: Light gray (#f8fafc)
+  - Cards: White with subtle shadows
+
+• Typography:
+  - Headers: Bold, 20-28px
+  - Body: Regular, 14-16px
+  - Labels: Medium weight, 12-14px
+
+• Icons:
+  - Feather icon set (consistent)
+  - Contextual icons for actions
+  - Medal emojis for winners
+
+💠 12.2 Interactive Elements
+
+• Touch Feedback:
+  - Active opacity on buttons
+  - Visual feedback on interactions
+  - Loading states during operations
+
+• Animations:
+  - Smooth transitions
+  - Confetti on game completion (optional)
+  - Pull-to-refresh animations
+
+• Gestures:
+  - Swipe to refresh
+  - Pull to refresh
+  - Long press for context (future)
+
+💠 12.3 Error Handling
+
+• User-friendly error messages
+• Validation feedback
+• Network error handling
+• Graceful degradation
+• Retry mechanisms
+
+═══════════════════════════════════════════════════════════════════════════════
+
+13. 🔄 Workflows & User Journeys
+
+💠 13.1 New User Journey
+
+1. Download app → Register
+2. Enter username, display name, mobile, password
+3. Account created → Auto-login
+4. Home screen → Create room or join room
+5. Add friends → Start playing games
+6. Earn points → View leaderboards
+
+💠 13.2 Game Creation Journey
+
+1. Home → Create/Join Room
+2. Room Dashboard → Select Members
+3. Choose Game Format
+4. Team Assignment → Shuffle/Accept
+5. Play Matches → Submit Results
+6. View Results → Points Assigned
+7. Return to Dashboard → Start New Game
+
+💠 13.3 Friend Discovery Journey
+
+1. Top Scores → Search Button
+2. Enter search query (name/username/phone)
+3. View Results → Tap "Add Friend"
+4. Friend Added → View Profile
+5. See Friend's Stats → Play Together
+
+💠 13.4 Unregistered Player Journey
+
+1. Admin adds player with name + phone (unregistered)
+2. Player participates in games
+3. Points and stats stored in UnregisteredPlayer
+4. Player registers with same phone number
+5. System links all data automatically
+6. Names replaced with system-generated IDs
+7. Player becomes fully registered user
+
+═══════════════════════════════════════════════════════════════════════════════
+
+14. ✅ Success Metrics & Validation
+
+💠 14.1 Technical Metrics
+
+• API Response Time: < 500ms average
+• Leaderboard Load Time: < 2 seconds
+• Game Creation Time: < 3 seconds
+• Point Assignment Accuracy: 100%
+• Data Linking Accuracy: 100%
+• Zero duplicate team assignments
+• Zero duplicate game creation in same room
+
+💠 14.2 User Experience Metrics
+
+• 95% of games completed without confusion
+• 80% users add at least 3 friends
+• 70% weekly retention rate
+• 90% search success rate
+• 85% friend request acceptance rate
+
+💠 14.3 Data Integrity
+
+• All points correctly assigned
+• All statistics accurately tracked
+• All matches properly recorded
+• All room memberships maintained
+• All friend relationships preserved
+• All unregistered player data linked correctly
+
+═══════════════════════════════════════════════════════════════════════════════
+
+15. 🚀 Future Enhancements
+
+💠 15.1 Planned Features
+
+• Live scoring per rally
+• AI fair-team generator (based on skill levels)
+• Video highlights integration
+• Tournament bracket visualization
+• Multi-admin mode for rooms
+• In-app chat for room members
+• Push notifications for:
+  - Friend requests
+  - Game invitations
+  - Match updates
+  - Achievement unlocks
+
+💠 15.2 Potential Features
+
+• Social media sharing
+• Player skill ratings
+• Match scheduling
+• Court booking integration
+• Equipment tracking
+• Player notes and tags
+• Custom tournament formats
+• Leaderboard filters (by location, skill level)
+• Team creation and management
+• Spectator mode
+• Match replays
+• Statistics analytics dashboard
+
+💠 15.3 Platform Expansion
+
+• Web admin dashboard
+• iOS app optimization
+• Android app optimization
+• Desktop web application
+• API documentation portal
+• Developer SDK
+
+═══════════════════════════════════════════════════════════════════════════════
+
+16. 🔒 Security & Privacy
+
+💠 16.1 Authentication
+
+• JWT tokens with expiration
+• Secure password hashing (bcrypt)
+• Token refresh mechanism
+• Logout clears all auth data
+
+💠 16.2 Data Protection
+
+• Phone numbers normalized and secured
+• Password never stored in plain text
+• API endpoints protected with middleware
+• Input validation on all forms
+• SQL injection prevention (MongoDB)
+• XSS prevention in frontend
+
+💠 16.3 Privacy Controls
+
+• User controls phone number visibility
+• Search requires minimum digits (7 for phone)
+• System-generated names for privacy
+• Friend-only data sharing options
+• Data export functionality (future)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+17. 📝 Testing & Quality Assurance
+
+💠 17.1 Test Coverage
+
+• Comprehensive game logic tests
+• Points calculation verification
+• Medal assignment validation
+• Data linking tests
+• API endpoint tests
+• Frontend component tests
+
+💠 17.2 Test Files
+
+• `comprehensive_game_test.js` - Full game flow testing
+• `profile_statistics_test.js` - Profile stats validation
+• `test_unregistered_player_flow.js` - Unregistered player linking
+• Various format-specific tests
+
+💠 17.3 Quality Checks
+
+• All game formats tested
+• All point calculations verified
+• All medal assignments validated
+• All data migrations tested
+• All edge cases handled
+
+═══════════════════════════════════════════════════════════════════════════════
+
+18. 📞 Support & Documentation
+
+💠 18.1 User Support
+
+• In-app help sections (future)
+• FAQ section (future)
+• Contact support (future)
+• Bug reporting (future)
+
+💠 18.2 Developer Documentation
+
+• API documentation
+• Code comments
+• Architecture diagrams
+• Deployment guides
+• Testing guides
+
+═══════════════════════════════════════════════════════════════════════════════
+
+END OF PRD
+
+This document serves as the comprehensive reference for the PickleMatch application.
+All features described above have been implemented and are currently active.
+
+For updates or modifications, please refer to the development team and update this document accordingly.
+
+═══════════════════════════════════════════════════════════════════════════════
+
