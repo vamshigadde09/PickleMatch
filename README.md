@@ -28,6 +28,11 @@ A mobile-first platform for pickleball groups that organizes matches, shuffles t
 
 iOS, Android, Web
 
+## 🌐 Production Backend
+
+The app is configured to use the production backend hosted on Vercel:
+- **Backend URL**: https://pickle-match.vercel.app/
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -62,6 +67,8 @@ MONGO_URL=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 PORT=5000
 ```
+
+**Note:** The frontend is configured to use the production backend at `https://pickle-match.vercel.app/`. To use a local backend, update `pickleball/src/api.js` with your local server URL.
 
 4. Start the development servers
 ```bash
